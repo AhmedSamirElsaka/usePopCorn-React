@@ -53,19 +53,17 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [movies] = useState(tempMovieData);
   const [watched] = useState(tempWatchedData);
-  const [isOpen1, setIsOpen1] = useState(true);
-  const [isOpen2, setIsOpen2] = useState(true);
 
   return (
     <>
       <NavbarComponent query={query} setQuery={setQuery} movies={movies} />
 
       <main className="main">
-        <MoviesBox isOpen={isOpen1} setIsOpen={setIsOpen1}>
+        <MoviesBox>
           <MoviesList movies={movies}></MoviesList>
         </MoviesBox>
 
-        <MoviesBox isOpen={isOpen2} setIsOpen={setIsOpen2}>
+        <MoviesBox>
           <>
             <WatchedMoviesSummary movies={watched} />
             <MoviesList movies={watched} isWatched={true}></MoviesList>
@@ -97,7 +95,9 @@ function NavbarComponent({ query, setQuery, movies }) {
   );
 }
 
-function MoviesBox({ children, isOpen, setIsOpen }) {
+function MoviesBox({ children }) {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <div className="box">
       <button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
@@ -114,36 +114,42 @@ function MoviesList({ movies, isWatched }) {
     <ul className="list">
       <ul className="list">
         {movies?.map((movie) => (
-          <li key={movie.imdbID}>
-            <img src={movie.Poster} alt={`${movie.Title} poster`} />
-            <h3>{movie.Title}</h3>
-            {isWatched ? (
-              <div>
-                <p>
-                  <span>🗓</span>
-                  <span>{movie.Year}</span>
-                </p>
-              </div>
-            ) : (
-              <div>
-                <p>
-                  <span>⭐️</span>
-                  <span>{movie.imdbRating}</span>
-                </p>
-                <p>
-                  <span>🌟</span>
-                  <span>{movie.userRating}</span>
-                </p>
-                <p>
-                  <span>⏳</span>
-                  <span>{movie.runtime} min</span>
-                </p>
-              </div>
-            )}
-          </li>
+          <MovieItem key={movie.imdbID} movie={movie} isWatched={isWatched} />
         ))}
       </ul>
     </ul>
+  );
+}
+
+function MovieItem({ movie, isWatched }) {
+  return (
+    <li key={movie.imdbID}>
+      <img src={movie.Poster} alt={`${movie.Title} poster`} />
+      <h3>{movie.Title}</h3>
+      {!isWatched ? (
+        <div>
+          <p>
+            <span>🗓</span>
+            <span>{movie.Year}</span>
+          </p>
+        </div>
+      ) : (
+        <div>
+          <p>
+            <span>⭐️</span>
+            <span>{movie.imdbRating}</span>
+          </p>
+          <p>
+            <span>🌟</span>
+            <span>{movie.userRating}</span>
+          </p>
+          <p>
+            <span>⏳</span>
+            <span>{movie.runtime} min</span>
+          </p>
+        </div>
+      )}
+    </li>
   );
 }
 
