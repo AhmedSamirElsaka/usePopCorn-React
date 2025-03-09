@@ -57,20 +57,27 @@ export default function App() {
   return (
     <>
       <NavbarComponent query={query} setQuery={setQuery} movies={movies} />
-
-      <main className="main">
-        <MoviesBox>
-          <MoviesList movies={movies}></MoviesList>
-        </MoviesBox>
-
-        <MoviesBox>
-          <>
-            <WatchedMoviesSummary movies={watched} />
-            <MoviesList movies={watched} isWatched={true}></MoviesList>
-          </>
-        </MoviesBox>
-      </main>
+      <Main
+        movies={movies}
+        watched={watched}
+        moviesList={<MoviesList movies={movies}></MoviesList>}
+      >
+        <>
+          <WatchedMoviesSummary movies={watched} />
+          <MoviesList movies={watched} isWatched={true}></MoviesList>
+        </>
+      </Main>
     </>
+  );
+}
+
+function Main({ moviesList, children }) {
+  return (
+    <main className="main">
+      <MoviesBox>{moviesList}</MoviesBox>
+
+      <MoviesBox>{children}</MoviesBox>
+    </main>
   );
 }
 
@@ -127,29 +134,39 @@ function MovieItem({ movie, isWatched }) {
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       {!isWatched ? (
-        <div>
-          <p>
-            <span>🗓</span>
-            <span>{movie.Year}</span>
-          </p>
-        </div>
+        <UnWatchedMoviesDetails movie={movie} />
       ) : (
-        <div>
-          <p>
-            <span>⭐️</span>
-            <span>{movie.imdbRating}</span>
-          </p>
-          <p>
-            <span>🌟</span>
-            <span>{movie.userRating}</span>
-          </p>
-          <p>
-            <span>⏳</span>
-            <span>{movie.runtime} min</span>
-          </p>
-        </div>
+        <WatchedMovieDetails movie={movie} />
       )}
     </li>
+  );
+}
+function UnWatchedMoviesDetails({ movie }) {
+  return (
+    <div>
+      <p>
+        <span>🗓</span>
+        <span>{movie.Year}</span>
+      </p>
+    </div>
+  );
+}
+function WatchedMovieDetails({ movie }) {
+  return (
+    <div>
+      <p>
+        <span>⭐️</span>
+        <span>{movie.imdbRating}</span>
+      </p>
+      <p>
+        <span>🌟</span>
+        <span>{movie.userRating}</span>
+      </p>
+      <p>
+        <span>⏳</span>
+        <span>{movie.runtime} min</span>
+      </p>
+    </div>
   );
 }
 
